@@ -3,14 +3,14 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var wx = require('./wx');
-var fsx = require('./fsx');
+var fsx = require('fs');
 
 var d = __dirname + '/v';
 app.set('trust proxy', true);
 app.set('view engine', 'ejs');
 app.set('views', d);
 
-var secret = fsx.readFileAsync(path.join(__dirname, './secret.txt'));
+var secret = fs.readFile(path.join(__dirname, './secret.txt'));
 var wechat_file = path.join(__dirname, './wechat.txt');
 var conf = {
 	wechat: {
@@ -18,10 +18,10 @@ var conf = {
 		appSecret: secret,
 		token: 'chichimonde',
 		getAccessToken: function(){
-			return fsx.readFileAsync(wechat_file)
+			return fs.readFile(wechat_file)
 		},
 		saveAccessToken: function(){
-			return fsx.writeFileAsync(wechat_file)
+			return fs.writeFile(wechat_file)
 		}
 	}
 };
