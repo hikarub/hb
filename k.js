@@ -10,7 +10,7 @@ app.set('trust proxy', true);
 app.set('view engine', 'ejs');
 app.set('views', d);
 
-var secret = path.join(__dirname, './secret.txt');
+var secret = fsx.readFileAsync(path.join(__dirname, './secret.txt'));
 var wechat_file = path.join(__dirname, './wechat.txt');
 var conf = {
 	wechat: {

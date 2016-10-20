@@ -59,15 +59,15 @@ Wechat.prototype.updateAccessToken = function(data){
     return new Promise(function(resolve, reject){
         request({url: url, json: true}).then(function(response){
             var data = response[1];
-            try {
+            try{
                 var now = (new Date().getTime());
-                var expires_in = now + (data.expires_in - 20) * 1000;
+                var expires_in = now + (data['expires_in'] - 20) * 1000;
 
                 data.expires_in = expires_in;
                 resolve(data);
             }
             catch(e){
-                console.log(e + data);
+                console.log(e);
             }
         })
     });
