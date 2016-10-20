@@ -68,6 +68,7 @@ Wechat.prototype.updateAccessToken = function(data){
             }
             catch(e){
                 console.log(e);
+                console.log(JSON.stringify(response));
             }
         })
     });
