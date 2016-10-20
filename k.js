@@ -10,11 +10,12 @@ app.set('trust proxy', true);
 app.set('view engine', 'ejs');
 app.set('views', d);
 
+var secret = path.join(__dirname, './secret.txt');
 var wechat_file = path.join(__dirname, './wechat.txt');
 var conf = {
 	wechat: {
 		appID: 'wx3dade2f3d2a28f00',
-		appSecret: '',
+		appSecret: secret,
 		token: 'chichimonde',
 		getAccessToken: function(){
 			return fsx.readFileAsync(wechat_file)
