@@ -3,7 +3,8 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var wx = require('./wx');
-var fsx = require('fs');
+var fsx = require('./fsx');
+var fs = require('fs');
 
 var d = __dirname + '/v';
 app.set('trust proxy', true);
@@ -18,10 +19,10 @@ var conf = {
 		appSecret: secret,
 		token: 'chichimonde',
 		getAccessToken: function(){
-			return fs.readFile(wechat_file)
+			return fsx.readFileAsync(wechat_file)
 		},
 		saveAccessToken: function(){
-			return fs.writeFile(wechat_file)
+			return fsx.writeFileAsync(wechat_file)
 		}
 	}
 };
@@ -30,4 +31,3 @@ app.use(wx(conf.wechat));
 
 app.listen(1234);
 console.log('Application Started on http://172.20.0.3:1234');
-
