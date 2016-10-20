@@ -58,18 +58,18 @@ Wechat.prototype.updateAccessToken = function(data){
     var url = api.accessToken + '&appid=' + appID + '&secret=' + appSecret;
     return new Promise(function(resolve, reject){
         request({url: url, json: true}).then(function(response){
-            var data = response[1];
-            try{
+            var data = response['body'];
+            try {
                 var now = (new Date().getTime());
-                var expires_in = now + (data['expires_in'] - 20) * 1000;
+                var expires_in = now + (data.expires_in - 20) * 1000;
 
                 data.expires_in = expires_in;
+                console.log(data);
                 resolve(data);
-            }
-            catch(e){
-                console.log(e);
-                console.log(JSON.stringify(response));
-            }
+              }
+              catch(e){
+                console.log(data);
+              }
         })
     });
 };
