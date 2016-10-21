@@ -5,6 +5,7 @@ var typer = require('media-typer');
 var x2j = require('xml2js').parseString;
 var request = Promise.promisify(require('request'));
 var Wechat = require('./wechat');
+var fm = require('./format');
 
 
 var log4js = require('log4js');
@@ -21,6 +22,7 @@ function sha1(str){
 module.exports = function(opt){
     var wechat = new Wechat(opt);
     return function(req, res, next){
+        var that = this;
         var token = opt.token;
         var signature = req.query.signature;
         var echostr = req.query.echostr;
@@ -38,10 +40,12 @@ module.exports = function(opt){
             }
         }
         else if (req.method === 'POST'){
+
             if (cryptSt !== signature) {
                 res.end('NO COMMENT');
                 return false;
             }
+            var content = {};
             rawbody(req, {
                 length: req.headers['content-length'],
                 limit: '1mb',
@@ -49,15 +53,33 @@ module.exports = function(opt){
             },function(err,string){
               if(err) return next(err);
               req.text = string;
-              var content = '';
-              console.log(string.toString());
+
+              //console.log(string.toString());
               x2j(string, {trim: true},function(err, data){
                 if(err) console.log(err);
                 content = data;
               });
-              console.log(content);
+              //console.log(content);
               next();
             });
+            var message = fm.formatMsg(content.xml);
+            console.log(message);
+            if (message.MsgType === 'event'){
+              if (message.Event === 'subscribe'){
+                var now = new Date().getTime();
+                var hi = 'Welcome !!!';
+
+                that.status =200;
+                that.type = 'application/xml'
+                that.body = '<xml>' +
+                  '<ToUserName><![CDATA[' + message.ToUserName + ']]></ToUserName>' +
+                  '<FromUserName><![CDATA[' + message.FromUserName + ']]></FromUserName>' +
+                  '<CreateTime>' + now + '</CreateTime>' +
+                  '<MsgType><![CDATA[' + 'text' + ']]></MsgType>' +
+                  '<Content><![CDATA[' + hi + ']]></Content>' +
+                  '</xml>';
+              }
+            }
         }
         //res.render('index',data);
         logger.info('['+ req.ips + '] [' + req.method + '] [' + req.originalUrl + ']');
