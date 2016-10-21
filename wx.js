@@ -50,7 +50,7 @@ module.exports = function(opt){
               if(err) return next(err);
               req.text = string;
               console.log(string.toString());
-              var content = x2j.parseXMLAsync（string);
+              var content = x2j.parseXMLAsync(string).then(function(i){return i});
               console.log(content);
               next();
             });
