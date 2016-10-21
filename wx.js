@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var Promise = require('bluebird');
 var rawbody = require('raw-body');
+var typer = require('media-typer');
 var request = Promise.promisify(require('request'));
 var Wechat = require('./wechat');
 
@@ -18,7 +19,7 @@ function sha1(str){
 
 module.exports = function(opt){
     var wechat = new Wechat(opt);
-    return function(req, res){
+    return function(req, res, next){
         var token = opt.token;
         var signature = req.query.signature;
         var echostr = req.query.echostr;
@@ -45,12 +46,11 @@ module.exports = function(opt){
                 limit: '1mb',
                 encoding: typer.parse(req.headers['content-type']).parameters.charset
             },function(err,string){
-              if(err) return next(err)
+              if(err) return next(err);
               req.text = string;
+              console.log(string);
               next();
             });
-
-            console.log(data.toString());
         }
         //res.render('index',data);
         logger.info('['+ req.ips + '] [' + req.method + '] [' + req.originalUrl + ']');
