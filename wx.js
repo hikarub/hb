@@ -50,12 +50,10 @@ module.exports = function(opt){
               if(err) return next(err);
               req.text = string;
               console.log(string.toString());
+              var content = x2j.parseXMLAsync（string);
+              console.log(content);
               next();
-            })
-            .then(function(){
-              console.log(stirng.toString());
             });
-
         }
         //res.render('index',data);
         logger.info('['+ req.ips + '] [' + req.method + '] [' + req.originalUrl + ']');
