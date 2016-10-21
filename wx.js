@@ -51,10 +51,10 @@ module.exports = function(opt){
               req.text = string;
               console.log(string.toString());
               return string;
-              //next();
+              next();
             });
-            var content = x2j.parseXMLAsync(data);
-            console.log(content);
+            console.console.log(data.toString());
+
         }
         //res.render('index',data);
         logger.info('['+ req.ips + '] [' + req.method + '] [' + req.originalUrl + ']');
