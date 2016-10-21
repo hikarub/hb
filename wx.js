@@ -46,18 +46,18 @@ module.exports = function(opt){
                 return false;
             }
 
-            rawbody(req, {
+            var rawxml = rawbody(req, {
                 length: req.headers['content-length'],
                 limit: '1mb',
                 encoding: typer.parse(req.headers['content-type']).parameters.charset
             },function(err,string){
               if(err) return next(err);
-              this.req.text = string;
+              req.text = string;
               //console.log(string.toString());
-              next();
+              return string;
             });
-            var content = {};
-            x2j(req.string, {trim: true},function(err, data){
+
+            x2j(rawxml, {trim: true},function(err, data){
               if(err) console.log(err);
               content = data;
             });
