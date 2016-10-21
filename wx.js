@@ -2,7 +2,7 @@ var crypto = require('crypto');
 var Promise = require('bluebird');
 var rawbody = require('raw-body');
 var typer = require('media-typer');
-var x2j = require('./x2j');
+var x2j = require('xml2js').parseString;
 var request = Promise.promisify(require('request'));
 var Wechat = require('./wechat');
 
@@ -49,8 +49,12 @@ module.exports = function(opt){
             },function(err,string){
               if(err) return next(err);
               req.text = string;
+              var content = '';
               console.log(string.toString());
-              var content = x2j.parseXMLAsync(string).then(function(i){return i});
+              x2j(string, {trim: true},function(err, data){
+                if(err) console.log(err);
+                content = data;
+              });
               console.log(content);
               next();
             });
