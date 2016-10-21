@@ -48,7 +48,7 @@ module.exports = function(opt){
             },function(err,string){
               if(err) return next(err);
               req.text = string;
-              console.log(string);
+              console.log(string.toString());
               next();
             });
         }
