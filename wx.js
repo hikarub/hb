@@ -38,12 +38,16 @@ module.exports = function(opt){
         else if (req.method === 'POST'){
             if (cryptSt !== signature) {
                 res.end('NO COMMENT');
-                return false
+                return false;
             }
-            var data = rawbody(this.req, {
-                length: this.length,
+            var data = rawbody(req, {
+                length: req.headers['content-length'],
                 limit: '1mb',
-                encoding: this.charset
+                encoding: typer.parse(req.headers['content-type']).parameters.charset
+            },function(err,string){
+              if(err) return next(err)
+              req.text = string;
+              next();
             });
 
             console.log(data.toString());
