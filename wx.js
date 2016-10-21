@@ -45,24 +45,23 @@ module.exports = function(opt){
                 res.end('NO COMMENT');
                 return false;
             }
-            var content = {};
+
             rawbody(req, {
                 length: req.headers['content-length'],
                 limit: '1mb',
                 encoding: typer.parse(req.headers['content-type']).parameters.charset
             },function(err,string){
               if(err) return next(err);
-              req.text = string;
-
+              this.req.text = string;
               //console.log(string.toString());
-              x2j(string, {trim: true},function(err, data){
-                if(err) console.log(err);
-                content = data;
-              });
-              //console.log(content);
               next();
             });
-            var message = fm.formatMsg(content.xml);
+            var content = {};
+            x2j(req.string, {trim: true},function(err, data){
+              if(err) console.log(err);
+              content = data;
+            });
+            var message = fm.formatMsg(content);
             console.log(message);
             if (message.MsgType === 'event'){
               if (message.Event === 'subscribe'){
