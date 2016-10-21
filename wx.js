@@ -42,7 +42,7 @@ module.exports = function(opt){
                 res.end('NO COMMENT');
                 return false;
             }
-            var data = rawbody(req, {
+            rawbody(req, {
                 length: req.headers['content-length'],
                 limit: '1mb',
                 encoding: typer.parse(req.headers['content-type']).parameters.charset
@@ -50,10 +50,11 @@ module.exports = function(opt){
               if(err) return next(err);
               req.text = string;
               console.log(string.toString());
-              return string;
               next();
+            })
+            .then(function(){
+              console.log(stirng.toString());
             });
-            console.console.log(data.toString());
 
         }
         //res.render('index',data);
