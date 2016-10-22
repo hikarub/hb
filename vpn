@@ -1,0 +1,46 @@
+apt-get install -y strongswan xl2tpd
+readonly CA_KEY=access.key
+readonly CA_CRT=access.crt
+readonly VPN_KEY=vpn.key
+readonly VPN_CRT=vpn.crt
+#作業場、VPNサーバードメイン
+readonly SRV_DOMAIN=chichimon.de
+readonly OUTPATH=./keyCrts
+
+#初期化
+rm /etc/ipsec.d/cacerts/*
+rm /etc/ipsec.d/certs/*
+rm /etc/ipsec.d/private/*
+mkdir ./keyCrts
+
+#ルート証明書作成
+cakey=${OUTPATH}/${CA_KEY}
+cacrt=${OUTPATH}/${CA_CRT}
+ipsec pki --gen > $cakey
+ipsec pki --self --in $cakey --ca --dn "C=JP, O=strongSwan, CN=strongSwanVPN CA" > $cacrt
+
+cp $cakey /etc/ipsec.d/private/
+cp $cacrt /etc/ipsec.d/cacerts/
+chmod 600 /etc/ipsec.d/private/$CA_KEY
+chmod 600 /etc/ipsec.d/cacerts/$CA_CRT
+chown root:root /etc/ipsec.d/private/$CA_KEY
+chown root:root /etc/ipsec.d/cacerts/$CA_CRT
+
+#サーバー証明書作成
+# 署名にひねりがあるため注意。
+# 参考資料:
+# 1). https://wiki.strongswan.org/projects/strongswan/wiki/Win7CertReq
+srvkey=${OUTPATH}/${VPN_KEY}
+srvcrt=${OUTPATH}/${VPN_CRT}
+ipsec pki --gen > $srvkey
+ipsec pki --pub --in $srvkey | \
+    ipsec pki \
+    --issue --cacert $cacrt --cakey $cakey --san $SRV_DOMAIN \
+    --flag serverAuth --dn "C=JP, O=strongSwan, CN=${SRV_DOMAIN}" > $srvcrt
+
+cp $srvkey /etc/ipsec.d/private/
+cp $srvcrt /etc/ipsec.d/certs/
+chmod 600 /etc/ipsec.d/private/$VPN_KEY
+chmod 600 /etc/ipsec.d/certs/$VPN_CRT
+chown root:root /etc/ipsec.d/private/$VPN_KEY
+chown root:root /etc/ipsec.d/certs/$VPN_CRT
